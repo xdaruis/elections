@@ -1,2 +1,6 @@
 .vscode
 .env
+
+# Django
+*.pyc
+__pycache__
