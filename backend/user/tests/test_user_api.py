@@ -9,6 +9,8 @@ from core.tests.helpers import create_user
 
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
+PROFILE_URL = reverse('user:profile')
+
 
 class PublicUserApiTests(TestCase):
   def setUp(self):
@@ -92,3 +94,47 @@ class PublicUserApiTests(TestCase):
 
       self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
       self.assertIn('Wrong username or password', str(res.data))
+
+  def test_retrieve_profile_unauthorized(self):
+    res = self.client.get(PROFILE_URL)
+
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateUserApiTests(TestCase):
+  def setUp(self):
+    self.client = APIClient()
+    self.user = create_user(
+      username='user',
+      name='User Tester',
+      email='user@example.com',
+      password='password',
+    )
+    self.client.force_authenticate(user=self.user)
+
+  def test_retrieve_profile_success(self):
+    res = self.client.get(PROFILE_URL)
+
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data, {
+      'username': self.user.username,
+      'name': self.user.name,
+      'email': self.user.email
+    })
+
+  def test_post_profile_not_allowed(self):
+    res = self.client.post(PROFILE_URL, {})
+
+    self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+  def test_update_user_profile_success(self):
+    payload = {
+      'name': 'Updated Name',
+      'password': 'password123'
+    }
+
+    res = self.client.patch(PROFILE_URL, payload)
+    self.user.refresh_from_db()
+    self.assertEqual(self.user.name, payload['name'])
+    self.assertTrue(self.user.check_password(payload['password']))
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
