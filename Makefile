@@ -8,3 +8,17 @@ test:
 
 migrations:
 	docker-compose run --rm app sh -c "python manage.py makemigrations"
+
+build-prod:
+	docker-compose -f docker-compose-deploy.yml build
+
+start-prod:
+	docker-compose -f docker-compose-deploy.yml up
+
+generate_env:
+	@echo "DB_NAME=dbname" > .env
+	@echo "DB_USER=rootuser" >> .env
+	@echo "DB_PASSWORD=password" >> .env
+	@echo "DJANGO_SECRET_KEY=$$(python3 -c 'import secrets; print(secrets.token_hex(100))')" >> .env
+	@echo "DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost,0.0.0.0" >> .env
+	@echo ".env file generated successfully!"

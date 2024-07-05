@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import secrets
 
 from pathlib import Path
 
@@ -22,13 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o&z7+f^45e=bw1swn(7tk6)#dxw!)6w-5k34ag^8-7z-zk%9tv'
+SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(100)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS.extend(
+  filter(
+    None,
+    os.environ.get('ALLOWED_HOSTS', '').split(','),
+  )
+)
 
 # Application definition
 
