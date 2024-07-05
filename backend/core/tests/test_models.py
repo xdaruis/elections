@@ -32,7 +32,7 @@ class ModelTests(TestCase):
     count = 1
 
     for email, expected in emails:
-      username = f"{base}{count}"
+      username = f'{base}{count}'
       count += 1
 
       user = get_user_model().objects.create_user(username, email, 'password')

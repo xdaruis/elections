@@ -26,11 +26,11 @@ services:
   db:
     image: postgres:13-alpine
     volumes:
-      - elections-psql:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=dbname
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
 
 volumes:
-  elections-psql:
+  postgres-data:
