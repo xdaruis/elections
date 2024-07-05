@@ -16,6 +16,6 @@ class Command(BaseCommand):
         self.check(databases=['default'])
         db_up = True
       except (Psycopg2Error, OperationalError):
-        self.stdout.write('Retrying connectiong in 1 second...')
+        self.stdout.write('Retrying connection in 1 second...')
         time.sleep(1)
     self.stdout.write(self.style.SUCCESS('Database up'))
