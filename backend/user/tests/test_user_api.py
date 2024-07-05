@@ -8,7 +8,7 @@ from rest_framework import status
 from core.tests.helpers import create_user
 
 CREATE_USER_URL = reverse('user:create')
-
+TOKEN_URL = reverse('user:token')
 
 class PublicUserApiTests(TestCase):
   def setUp(self):
@@ -58,3 +58,37 @@ class PublicUserApiTests(TestCase):
       email=payload['username']
     ).exists()
     self.assertFalse(user_exists)
+
+  def test_create_token_for_user(self):
+    """Should return a token if valid username and password"""
+    create_user(**self.user_data)
+
+    payload = {
+      'username': self.user_data['username'],
+      'password': self.user_data['password'],
+    }
+    res = self.client.post(TOKEN_URL, payload)
+
+    self.assertIn('token', str(res.data))
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+  def test_create_token_bad_credentials(self):
+    """Should return status 400 if wrong password or username"""
+    create_user(**self.user_data)
+
+    fields_to_test = ['username', 'password']
+
+    for field in fields_to_test:
+      payload = {
+        'username': self.user_data['username'],
+        'password': self.user_data['password'],
+      }
+      if field == 'username':
+        payload['username'] += 'wrong'
+      else:
+        payload['password'] += 'wrong'
+
+      res = self.client.post(TOKEN_URL, payload)
+
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+      self.assertIn('Wrong username or password', str(res.data))
