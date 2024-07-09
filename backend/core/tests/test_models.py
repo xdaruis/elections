@@ -1,5 +1,8 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+
+from core import models
 
 
 class ModelTests(TestCase):
@@ -47,3 +50,43 @@ class ModelTests(TestCase):
     )
     self.assertTrue(user.is_superuser)
     self.assertTrue(user.is_staff)
+
+  def test_creating_an_election(self):
+    """Should create an election"""
+    payload = {
+      'title': 'Election',
+      'start_date': '2024-01-01',
+      'end_date': '2024-01-02',
+    }
+    election = models.Election.objects.create(**payload)
+
+    self.assertEqual(str(election), election.title)
+
+  def test_creating_election_missing_fields(self):
+    """Should throw an error if missing fields"""
+    payload = {
+      'title': 'Election',
+      'start_date': '2024-01-01',
+      'end_date': '2024-01-02',
+    }
+    for field in ['title', 'start_date', 'end_date']:
+      wrong_payload = payload.copy()
+      del wrong_payload[field]
+
+      with self.assertRaises(ValidationError):
+        models.Election.objects.create(**wrong_payload)
+
+  def test_creating_election_with_wrong_dates(self):
+    """Should throw an error if wrong dates"""
+    payload = {
+      'title': 'Election',
+      'start_date': '2024-01-01',
+      'end_date': '2024-01-02',
+    }
+    wrong_dates = ['2024-01-02', '2024-01-03', '2024.01.03']
+    for date in wrong_dates:
+      wrong_payload = payload.copy()
+      wrong_payload['start_date'] = date
+
+      with self.assertRaises(ValidationError):
+        models.Election.objects.create(**wrong_payload)
