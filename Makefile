@@ -22,3 +22,6 @@ generate_env:
 	@echo "DJANGO_SECRET_KEY=$$(python3 -c 'import secrets; print(secrets.token_hex(100))')" >> .env
 	@echo "DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost,0.0.0.0" >> .env
 	@echo ".env file generated successfully!"
+	@echo "" >> .env.backup
+	@echo $(shell date +'%d.%m.%Y %H:%M:%S') >> .env.backup
+	@cat .env >> .env.backup
