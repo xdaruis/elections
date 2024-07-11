@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
   PermissionsMixin,
 )
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from django.db import models
@@ -51,6 +52,7 @@ def validate_date_format(value):
 
 class Election(models.Model):
   title = models.CharField(max_length=255, unique=True)
+  slug = models.SlugField(max_length=255, unique=True, blank=True)
   start_date = models.DateField()
   end_date = models.DateField()
 
@@ -65,12 +67,15 @@ class Election(models.Model):
       ('title', 'Title'),
       ('start_date', 'Start date'),
       ('end_date', 'End date'),
+      ('slug', 'Slug'),
     ]:
       value = getattr(self, field_name)
       if not value:
         raise ValidationError(_(f'{field} cannot be empty.'))
 
   def save(self, *args, **kwargs):
+    if not self.slug:
+      self.slug = slugify(self.title)
     self.validate_not_empty()
     validate_date_format(self.start_date)
     validate_date_format(self.end_date)
