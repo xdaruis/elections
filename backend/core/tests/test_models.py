@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
 from core import models
-from core.tests.helpers import create_user, create_election
+from core.tests.helpers import create_user, create_election, create_candidate
 
 
 class ModelTests(TestCase):
@@ -162,3 +162,121 @@ class ModelTests(TestCase):
     self.assertEqual(models.Candidate.objects.count(), 2)
     self.assertEqual(str(candidate1), f'{user1.username} - {election.slug}')
     self.assertEqual(str(candidate2), f'{user2.username} - {election.slug}')
+
+  def test_create_vote(self):
+    """Should create a vote successfully."""
+    user = create_user()
+    election = create_election()
+    candidate = create_candidate(create_user(), election)
+
+    vote = models.Vote.objects.create(
+      user=user,
+      election=election,
+      voted_candidate=candidate
+    )
+
+    self.assertEqual(models.Vote.objects.count(), 1)
+    self.assertEqual(
+      str(vote),
+      f'{user.username} voted in {election.title} for {candidate.user.username}'
+    )
+
+  def test_unique_vote_per_user_per_election(self):
+    """Should not allow a user to vote twice in the same election."""
+    user = create_user()
+    election = create_election()
+    candidate1 = create_candidate(create_user(), election)
+    candidate2 = create_candidate(create_user(), election)
+
+    models.Vote.objects.create(
+      user=user,
+      election=election,
+      voted_candidate=candidate1
+    )
+
+    with self.assertRaises(ValidationError):
+      models.Vote.objects.create(
+        user=user,
+        election=election,
+        voted_candidate=candidate2
+      )
+
+  def test_user_can_vote_in_different_elections(self):
+    """Should allow a user to vote in different elections."""
+    user = create_user()
+    election1 = create_election()
+    election2 = create_election()
+    candidate1 = create_candidate(create_user(), election1)
+    candidate2 = create_candidate(create_user(), election2)
+
+    vote1 = models.Vote.objects.create(
+        user=user,
+        election=election1,
+        voted_candidate=candidate1
+    )
+
+    vote2 = models.Vote.objects.create(
+        user=user,
+        election=election2,
+        voted_candidate=candidate2
+    )
+
+    self.assertEqual(models.Vote.objects.count(), 2)
+    self.assertNotEqual(vote1.election, vote2.election)
+
+  def test_vote_for_candidate_in_wrong_election(self):
+    """Should not allow voting for a candidate in the wrong election."""
+    user = create_user()
+    election1 = create_election()
+    election2 = create_election()
+    candidate = create_candidate(create_user(), election1)
+
+    with self.assertRaises(Exception):
+      models.Vote.objects.create(
+        user=user,
+        election=election2,
+        voted_candidate=candidate
+      )
+
+  def test_cascade_delete(self):
+    """
+    Should delete votes when related user, election, or candidate is deleted.
+    """
+    user = create_user()
+    election = create_election()
+    candidate = create_candidate(create_user(), election)
+
+    models.Vote.objects.create(
+      user=user,
+      election=election,
+      voted_candidate=candidate
+    )
+
+    self.assertEqual(models.Vote.objects.count(), 1)
+
+    user.delete()
+    self.assertEqual(models.Vote.objects.count(), 0)
+
+    user = create_user()
+    models.Vote.objects.create(
+      user=user,
+      election=election,
+      voted_candidate=candidate
+    )
+
+    # Test cascade on election delete
+    election.delete()
+    self.assertEqual(models.Vote.objects.count(), 0)
+
+    election = create_election()
+    candidate = create_candidate(create_user(), election)
+
+    models.Vote.objects.create(
+      user=user,
+      election=election,
+      voted_candidate=candidate
+    )
+
+    # Test cascade on candidate delete
+    candidate.delete()
+    self.assertEqual(models.Vote.objects.count(), 0)

@@ -11,6 +11,13 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 
+def validate_date_format(value):
+  try:
+    datetime.strptime(str(value), '%Y-%m-%d')
+  except ValueError:
+    raise ValidationError(_('Invalid date format. Use YYYY-MM-DD.'))
+
+
 class UserManager(BaseUserManager):
   def create_user(self, username, email, password=None, **extra_fields):
     user = self.model(username=username, email=self.normalize_email(email),
@@ -43,13 +50,6 @@ class User(AbstractBaseUser, PermissionsMixin):
   USERNAME_FIELD = 'username'
 
 
-def validate_date_format(value):
-  try:
-    datetime.strptime(str(value), '%Y-%m-%d')
-  except ValueError:
-    raise ValidationError(_('Invalid date format. Use YYYY-MM-DD.'))
-
-
 class Election(models.Model):
   title = models.CharField(max_length=255, unique=True)
   slug = models.SlugField(max_length=255, unique=True, blank=True)
@@ -57,26 +57,15 @@ class Election(models.Model):
   end_date = models.DateField()
 
   def clean(self):
+    super().clean()
     if self.end_date <= self.start_date:
       raise ValidationError(_('End date must be after start date.'))
     if (self.end_date - self.start_date) < timedelta(days=1):
       raise ValidationError(_('The election must last at least 1 day.'))
 
-  def validate_not_empty(self):
-    for field_name, field in [
-      ('title', 'Title'),
-      ('start_date', 'Start date'),
-      ('end_date', 'End date'),
-      ('slug', 'Slug'),
-    ]:
-      value = getattr(self, field_name)
-      if not value:
-        raise ValidationError(_(f'{field} cannot be empty.'))
-
   def save(self, *args, **kwargs):
     if not self.slug:
       self.slug = slugify(self.title)
-    self.validate_not_empty()
     validate_date_format(self.start_date)
     validate_date_format(self.end_date)
     self.full_clean()
@@ -96,3 +85,27 @@ class Candidate(models.Model):
 
   def __str__(self):
     return f'{self.user} - {self.election.slug}'
+
+
+class Vote(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  election = models.ForeignKey(Election, on_delete=models.CASCADE)
+  voted_candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+
+  class Meta:
+    unique_together = ('user', 'election')
+
+  def clean(self):
+    super().clean()
+    if self.voted_candidate.election != self.election:
+      raise ValidationError(
+        'The voted candidate must belong to the specified election.'
+      )
+
+  def save(self, *args, **kwargs):
+    self.full_clean()
+    return super().save(*args, **kwargs)
+
+  def __str__(self):
+    return f'{self.user.username} voted in {self.election.title} ' + \
+      f'for {self.voted_candidate.user.username}'
