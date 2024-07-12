@@ -1,8 +1,10 @@
 from django.test import TestCase
+from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
 from core import models
+from core.tests.helpers import create_user, create_election
 
 
 class ModelTests(TestCase):
@@ -90,3 +92,73 @@ class ModelTests(TestCase):
 
       with self.assertRaises(ValidationError):
         models.Election.objects.create(**wrong_payload)
+
+  def test_creating_a_candidate(self):
+    """Should create a candidate"""
+    user = create_user()
+    election = create_election()
+    payload = {
+      'user': user,
+      'election': election,
+      'description': 'I will create a better future!',
+    }
+    candidate = models.Candidate.objects.create(**payload)
+    self.assertEqual(str(candidate), f'{user.username} - {election.slug}')
+
+  def test_creating_duplicate_candidate(self):
+    """Should not create another candidate for the same user and election"""
+    user = create_user()
+    election = create_election()
+    payload = {
+      'user': user,
+      'election': election,
+      'description': 'I will create a better future!',
+    }
+    models.Candidate.objects.create(**payload)
+    with self.assertRaises(IntegrityError):
+      models.Candidate.objects.create(**payload)
+
+  def test_creating_candidate_for_different_elections(self):
+    """
+    Should allow creating candidates for the same user in different elections
+    """
+    user = create_user()
+    election1 = create_election()
+    election2 = create_election()
+
+    candidate1 = models.Candidate.objects.create(
+      user=user,
+      election=election1,
+      description='Description for Election 1'
+    )
+    candidate2 = models.Candidate.objects.create(
+      user=user,
+      election=election2,
+      description='Description for Election 2'
+    )
+    self.assertEqual(models.Candidate.objects.count(), 2)
+    self.assertEqual(str(candidate1), f'{user.username} - {election1.slug}')
+    self.assertEqual(str(candidate2), f'{user.username} - {election2.slug}')
+
+  def test_creating_candidates_for_same_election(self):
+    """
+    Should allow creating candidates for different users in the same election
+    """
+    user1 = create_user()
+    user2 = create_user()
+    election = create_election()
+
+    candidate1 = models.Candidate.objects.create(
+      user=user1,
+      election=election,
+      description='Description for User 1'
+    )
+    candidate2 = models.Candidate.objects.create(
+      user=user2,
+      election=election,
+      description='Description for User 2'
+    )
+
+    self.assertEqual(models.Candidate.objects.count(), 2)
+    self.assertEqual(str(candidate1), f'{user1.username} - {election.slug}')
+    self.assertEqual(str(candidate2), f'{user2.username} - {election.slug}')

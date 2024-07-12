@@ -84,3 +84,15 @@ class Election(models.Model):
 
   def __str__(self):
     return self.title
+
+
+class Candidate(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  election = models.ForeignKey(Election, on_delete=models.CASCADE)
+  description = models.CharField(max_length=255)
+
+  class Meta:
+    unique_together = ('user', 'election')
+
+  def __str__(self):
+    return f'{self.user} - {self.election.slug}'
