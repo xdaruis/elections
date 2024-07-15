@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from core.models import Election, Candidate
+from core.models import Election, Candidate, Vote
 
 _user_id = 1
 _election_id = 1
@@ -36,4 +36,12 @@ def create_candidate(user, election):
     user=user,
     election=election,
     description=f'Vote me! Vote now for {user}!',
+  )
+
+
+def create_vote(user, election, voted_candidate):
+  return Vote.objects.create(
+    user=user,
+    election=election,
+    voted_candidate=voted_candidate
   )

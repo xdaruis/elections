@@ -17,11 +17,15 @@ class ElectionDetailSerializer(serializers.ModelSerializer):
 
 class CandidateSerializer(serializers.ModelSerializer):
   username = serializers.SerializerMethodField()
+  votes = serializers.SerializerMethodField()
 
   class Meta:
     model = Candidate
-    fields = ['username', 'description']
-    read_only_fields = ['username']
+    fields = ['username', 'description', 'votes']
+    read_only_fields = ['username', 'votes']
 
   def get_username(self, obj):
     return obj.user.username
+
+  def get_votes(self, obj):
+    return getattr(obj, 'vote_count', 0)
