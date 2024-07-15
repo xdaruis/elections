@@ -15,10 +15,16 @@ from core.models import Candidate, Election, Vote
 from election import serializers
 
 
-class IsElectionActive(permissions.BasePermission):
+class IsElectionOngoing(permissions.BasePermission):
   def has_object_permission(self, request, view, obj):
     now = timezone.now().date()
     return obj.start_date <= now <= obj.end_date
+
+
+class IsElectionUpcoming(permissions.BasePermission):
+  def has_object_permission(self, request, view, obj):
+    now = timezone.now().date()
+    return now < obj.start_date
 
 
 @extend_schema_view(
@@ -61,7 +67,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     return Response(serializer.data)
 
   @action(detail=True, methods=['POST', 'DELETE', 'PATCH'],
-          permission_classes=[IsAuthenticated, IsElectionActive])
+          permission_classes=[IsAuthenticated, IsElectionOngoing])
   def vote(self, request, slug=None):
     """Create/Modify/Delete votes for an ongoing election"""
     election = self.get_object()
@@ -104,4 +110,47 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     vote.voted_candidate = candidate
     vote.save()
     return Response({'message': 'Vote updated successfully'},
+                    status=status.HTTP_200_OK)
+
+  @action(detail=True, methods=['POST', 'DELETE', 'PATCH'],
+          permission_classes=[IsAuthenticated, IsElectionUpcoming])
+  def candidate(self, request, slug=None):
+    """Create/Modify/Delete candidacy for an upcoming election"""
+    election = self.get_object()
+    user = request.user
+    candidate = Candidate.objects.filter(user=user, election=election).first()
+
+    if request.method == 'DELETE':
+      if not candidate:
+        return Response({'error': 'You are not a candidate in this election'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+      candidate.delete()
+      return Response({'message': 'Candidacy deleted successfully'},
+                      status=status.HTTP_200_OK)
+
+    description = request.data.get('description', '')
+
+    if request.method == 'POST':
+      if candidate:
+        return Response(
+          {'error': 'You are already a candidate in this election'},
+          status=status.HTTP_400_BAD_REQUEST
+        )
+
+      Candidate.objects.create(
+        user=user,
+        election=election,
+        description=description
+      )
+      return Response({'message': 'Candidacy created successfully'},
+                      status=status.HTTP_201_CREATED)
+
+    if not candidate:
+      return Response({'error': 'You have not voted in this election'},
+                      status=status.HTTP_400_BAD_REQUEST)
+
+    candidate.description = description
+    candidate.save()
+    return Response({'message': 'Candidacy updated successfully'},
                     status=status.HTTP_200_OK)

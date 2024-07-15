@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.utils import timezone
+from datetime import timedelta
 
 from core.tests.helpers import (
   create_candidate,
@@ -9,6 +11,7 @@ from core.tests.helpers import (
   create_user,
   create_vote,
 )
+from core.models import Candidate
 
 
 class PublicCandidateApiTests(TestCase):
@@ -60,3 +63,77 @@ class PublicCandidateApiTests(TestCase):
     self.assertEqual(res.data[0]['username'], self.user2.username)
     self.assertEqual(res.data[1]['votes'], 3)
     self.assertEqual(res.data[1]['username'], self.user1.username)
+
+
+class PrivateCandidateApiTests(TestCase):
+  def setUp(self):
+    self.client = APIClient()
+    self.user = create_user()
+    self.client.force_authenticate(user=self.user)
+
+    self.election = create_election(
+      start_date=timezone.now().date() + timedelta(days=7),
+      end_date=timezone.now().date() + timedelta(days=14)
+    )
+
+  def test_create_candidate(self):
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    payload = {'description': 'Test candidate description'}
+    res = self.client.post(url, payload)
+
+    self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+    self.assertTrue(Candidate.objects.filter(
+      user=self.user, election=self.election
+    ).exists())
+
+  def test_update_candidate(self):
+    candidate = create_candidate(self.user, self.election)
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    payload = {'description': 'Updated description'}
+    res = self.client.patch(url, payload)
+
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    candidate.refresh_from_db()
+    self.assertEqual(candidate.description, 'Updated description')
+
+  def test_delete_candidate(self):
+    create_candidate(self.user, self.election)
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    res = self.client.delete(url)
+
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertFalse(Candidate.objects.filter(
+      user=self.user, election=self.election
+    ).exists())
+
+  def test_create_candidate_already_exists(self):
+    create_candidate(self.user, self.election)
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    payload = {'description': 'Test candidate description'}
+    res = self.client.post(url, payload)
+
+    self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_update_nonexistent_candidate(self):
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    payload = {'description': 'Updated description'}
+    res = self.client.patch(url, payload)
+
+    self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_delete_nonexistent_candidate(self):
+    url = reverse('election:election-candidate', args=[self.election.slug])
+    res = self.client.delete(url)
+
+    self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_candidate_actions_for_ongoing_election(self):
+    ongoing_election = create_election(
+      start_date=timezone.now().date() - timedelta(days=1),
+      end_date=timezone.now().date() + timedelta(days=6)
+    )
+    url = reverse('election:election-candidate', args=[ongoing_election.slug])
+    payload = {'description': 'Test candidate description'}
+    res = self.client.post(url, payload)
+
+    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
