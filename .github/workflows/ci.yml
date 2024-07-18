@@ -8,9 +8,9 @@ on:
       - main
 
 jobs:
-  test-lint:
+  test-lint-backend:
     if: ${{ (github.event.review.state == 'approved') || (github.ref == 'refs/heads/main')}}
-    name: Test and lint
+    name: Test and lint backend
     runs-on: ubuntu-latest
     steps:
       - name: Login to DockerHub
@@ -24,3 +24,46 @@ jobs:
         run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
       - name: Lint Code
         run: docker-compose run --rm app sh -c "flake8"
+
+  test-lint-frontend:
+    if: ${{ (github.event.review.state == 'approved') || (github.ref == 'refs/heads/main')}}
+    name: Test and lint frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache Node modules
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/work/elections/elections/frontend/node_modules
+        key: ${{ runner.os }}-${{ hashFiles('/home/runner/work/elections/elections/frontend/package.json') }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run lint
+      run: npm run lint
+
+    - name: Run formatter
+      run: |
+        CHANGED_FILES=$(git diff --name-only)
+        npm run format
+
+        if [[ $(git diff --name-only) != "$CHANGED_FILES" ]]; then
+          echo "::error::Formatter made changes to files. Please fix formatting issues and commit again."
+          exit 1
+        fi
