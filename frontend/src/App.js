@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Layout from './components/Layout/index.js';
+import Loader from './components/Loader.js';
 import { loaded, login, logout } from './features/auth.js';
 import Home from './routes/Home.js';
 import Login from './routes/Login.js';
@@ -41,6 +42,7 @@ const App = () => {
 
   return (
     <Router>
+      {isLoading && <Loader />}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
