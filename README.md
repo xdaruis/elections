@@ -4,6 +4,8 @@
 - Django
 - Docker
 - Django REST Framework
+- React
+- Redux
 
 ## Summary
 This project is a backend API designed to facilitate election processes. It includes:
