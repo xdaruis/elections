@@ -57,38 +57,33 @@ const Login = () => {
   };
 
   return (
-    <>
-      <CustomCard>
-        <form onSubmit={submitForm}>
-          <div className="mb-md-2 mt-md-3 pb-5">
-            <h2 className="fw-bold mb-5 text-uppercase">Sign in</h2>
-            <div className="form-group mb-4 text-start">
-              <CustomInput setData={setUserData} type="username" />
-              <CustomInput setData={setUserData} type="password" />
-            </div>
-            <button
-              className="btn btn-outline-primary btn-lg px-5"
-              type="submit"
-            >
-              Login
-            </button>
-            <p className="small mt-3 pb-lg-2">
-              <a className="text-50" href="#!">
-                Forgot password?
-              </a>
-            </p>
+    <CustomCard>
+      <form onSubmit={submitForm}>
+        <div className="mb-md-2 mt-md-3 pb-5">
+          <h2 className="fw-bold mb-5 text-uppercase">Sign in</h2>
+          <div className="form-group mb-4 text-start">
+            <CustomInput setData={setUserData} type="username" />
+            <CustomInput setData={setUserData} type="password" />
           </div>
-        </form>
-        <div>
-          <p className="mb-0 text-end">
-            Don&apos;t have an account?{' '}
-            <Link to="/register" className="text-50 fw-bold">
-              Sign Up
-            </Link>
+          <button className="btn btn-outline-primary btn-lg px-5" type="submit">
+            Login
+          </button>
+          <p className="small mt-3 pb-lg-2">
+            <a className="text-50" href="#!">
+              Forgot password?
+            </a>
           </p>
         </div>
-      </CustomCard>
-    </>
+      </form>
+      <div>
+        <p className="mb-0 text-end">
+          Don&apos;t have an account?{' '}
+          <Link to="/register" className="text-50 fw-bold">
+            Sign Up
+          </Link>
+        </p>
+      </div>
+    </CustomCard>
   );
 };
 

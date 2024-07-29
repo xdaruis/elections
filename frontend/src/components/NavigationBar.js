@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { PersonCircle } from 'react-bootstrap-icons';
-import { useSelector , useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { logout } from '../features/auth';

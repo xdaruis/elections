@@ -9,6 +9,7 @@ import { loaded, login, logout } from './features/auth.js';
 import Home from './routes/Home.js';
 import Login from './routes/Login.js';
 import NotFound from './routes/NotFound.js';
+import Register from './routes/Register.js';
 import setAuthToken from './utils/setAuthToken.js';
 
 if (localStorage.token) {
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route exact path="login" element={<Login />} />
+          <Route exact path="register" element={<Register />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
