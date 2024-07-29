@@ -35,7 +35,10 @@ const App = () => {
             dispatch(logout());
           }
         })
-        .catch((error) => alert(error));
+        .catch((error) => {
+          dispatch(logout());
+          alert(error);
+        });
     }
     dispatch(loaded());
   }, []);
