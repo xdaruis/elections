@@ -1,13 +1,13 @@
 SHELL := /bin/bash
 
 lint:
-	docker-compose run --rm app sh -c "flake8"
+	docker-compose run --rm backend sh -c "flake8"
 
 test:
-	docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
+	docker-compose run --rm backend sh -c "python manage.py wait_for_db && python manage.py test"
 
 migrations:
-	docker-compose run --rm app sh -c "python manage.py makemigrations"
+	docker-compose run --rm backend sh -c "python manage.py makemigrations"
 
 build-prod:
 	docker-compose -f docker-compose-deploy.yml build
