@@ -43,7 +43,7 @@ const Login = () => {
           const errorMessages = Object.values(errorData)
             .flat()
             .filter((message) => typeof message === 'string')
-            .join('\n');
+            .join('');
           alert(errorMessages);
         } else if (error.request) {
           alert('No response received from server. Please try again.');
