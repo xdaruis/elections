@@ -1,11 +1,11 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Layout from './components/Layout/index.js';
 import Loader from './components/Loader.js';
-import { loaded, login, logout } from './features/auth.js';
+import { login, logout } from './features/auth.js';
 import Home from './routes/Home.js';
 import Login from './routes/Login.js';
 import NotFound from './routes/NotFound.js';
@@ -20,33 +20,35 @@ axios.defaults.withCredentials = true;
 
 const App = () => {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.auth.isLoading);
-
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    if (localStorage.token) {
-      axios
-        .get('/api/user/profile/')
-        .then((response) => {
-          const data = response.data;
-          if (data.username) {
-            dispatch(
-              login({ token: localStorage.token, username: data.username })
-            );
-          } else {
+    const setUserSession = async () => {
+      if (localStorage.token) {
+        await axios
+          .get('/api/user/profile/')
+          .then((response) => {
+            const data = response.data;
+            if (data.username) {
+              dispatch(
+                login({ token: localStorage.token, username: data.username })
+              );
+            } else {
+              dispatch(logout());
+            }
+          })
+          .catch((error) => {
             dispatch(logout());
-          }
-        })
-        .catch((error) => {
-          dispatch(logout());
-          alert(error);
-        });
-    }
-    dispatch(loaded());
+            alert(error);
+          });
+      }
+      setLoaded(true);
+    };
+    setUserSession();
   }, []);
 
+  if (!loaded) return <Loader />;
   return (
     <Router>
-      {isLoading && <Loader />}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

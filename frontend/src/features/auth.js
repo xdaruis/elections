@@ -5,8 +5,7 @@ import setAuthToken from '../utils/setAuthToken';
 const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: false,
-  username: null,
-  isLoading: true
+  username: null
 };
 
 const authSlice = createSlice({
@@ -18,19 +17,14 @@ const authSlice = createSlice({
       setAuthToken(token);
       state.token = token;
       state.username = username;
-      state.isLoading = false;
       state.isAuthenticated = true;
     },
     logout: (state) => {
       setAuthToken();
       state.token = null;
       state.username = null;
-      state.isLoading = false;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
-    },
-    loaded: (state) => {
-      state.isLoading = false;
     }
   }
 });
