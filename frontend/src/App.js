@@ -25,7 +25,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Home/>,
+        element: <Home />
       },
       {
         path: '/login',
@@ -39,9 +39,9 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: <NotFound />
   }
-])
+]);
 
 const App = () => {
   const dispatch = useDispatch();

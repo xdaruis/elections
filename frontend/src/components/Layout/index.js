@@ -2,13 +2,13 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 import Footer from '../Footer.js';
-import NavigationBar from '../NavigationBar.js';
+import Navbar from '../Navbar.js';
 import './styles.css';
 
 const Layout = () => {
   return (
     <div className="holy-grail-flexbox">
-      <NavigationBar />
+      <Navbar />
       <main className="main-content">
         <Outlet />
       </main>

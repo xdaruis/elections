@@ -1,0 +1,3 @@
+.btn-link:focus {
+  box-shadow: none; /* Remove the blue outline */
+}
