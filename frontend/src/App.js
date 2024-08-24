@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import Layout from './components/Layout/index.js';
 import Loader from './components/Loader.js';
@@ -18,9 +18,35 @@ if (localStorage.token) {
 
 axios.defaults.withCredentials = true;
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: '/',
+        element: <Home/>,
+      },
+      {
+        path: '/login',
+        element: <Login />
+      },
+      {
+        path: '/register',
+        element: <Register />
+      }
+    ]
+  },
+  {
+    path: '*',
+    element: <NotFound />,
+  }
+])
+
 const App = () => {
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
     const setUserSession = async () => {
       if (localStorage.token) {
@@ -47,18 +73,8 @@ const App = () => {
   }, []);
 
   if (!loaded) return <Loader />;
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route exact path="login" element={<Login />} />
-          <Route exact path="register" element={<Register />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
-  );
+
+  return <RouterProvider router={router} />;
 };
 
 export default App;
