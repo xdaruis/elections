@@ -22,8 +22,6 @@ services:
     build:
       context: ./frontend
     hostname: frontend
-    volumes:
-      - frontend:/frontend
     depends_on:
       - backend
 

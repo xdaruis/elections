@@ -44,7 +44,7 @@ function Register() {
   };
 
   return (
-    <CustomCard>
+    <CustomCard width={5}>
       <InfoText message={error} type={error} />
       <form onSubmit={submitForm}>
         <div className="mb-md-4 mt-md-3 pb-5">

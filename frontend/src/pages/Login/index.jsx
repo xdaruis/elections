@@ -95,9 +95,9 @@ function Login() {
               Login
             </button>
             <p className="small mt-3 pb-lg-2">
-              <a className="text-50" href="#!">
+              <Link className="text-50" to="#!">
                 Forgot password?
-              </a>
+              </Link>
             </p>
           </div>
         </div>
