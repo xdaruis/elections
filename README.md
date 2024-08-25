@@ -36,10 +36,10 @@ docker-compose up
 The backend will be available on port 8000.
 
 ### Access Swagger Docs:
-- `http://localhost:8000/api/docs`
+- `http://localhost:9000/api/docs`
 
 ### Access Admin Panel:
-- `http://localhost:8000/admin`
+- `http://localhost:9000/admin`
 
 ### Additional Scripts:
 Different scripts for **production server setup**, testing, and linting are included in the `Makefile`.
