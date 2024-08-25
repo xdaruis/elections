@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
-import CustomCard from '../components/ui/CustomCard';
-import CustomInput from '../components/ui/CustomInput';
-import InfoText from '../components/ui/InfoText';
-import { login } from '../features/auth';
+import CustomCard from '../../components/ui/CustomCard';
+import CustomInput from '../../components/ui/CustomInput';
+import InfoText from '../../components/ui/InfoText';
+import { login } from '../../features/auth';
 
 function Login() {
   const [error, setError] = useState('');
