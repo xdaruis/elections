@@ -4,7 +4,7 @@ function CustomCard({ children, width = 4, title }) {
   const columnClass = `col-sm-${width + 4} col-md-${width + 2} col-lg-${width}`;
 
   return (
-    <div className="container mt-4 mb-2">
+    <div className="container mt-4 mb-2 p-1">
       <div className="row justify-content-center">
         <div className={columnClass}>
           <div className="card shadow">
