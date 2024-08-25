@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Loader = () => {
+function Loader() {
   return (
     <div
       className="vh-100 vw-100 position-fixed top-0
@@ -17,6 +17,6 @@ const Loader = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Loader;

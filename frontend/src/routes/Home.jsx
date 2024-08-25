@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Home = () => {
+function Home() {
   return (
     <div className="d-flex flex-column justify-content-center mt-5">
       <div className="text-center">
@@ -8,6 +8,6 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Home;

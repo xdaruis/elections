@@ -2,11 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 
-import { logout } from '../features/auth.js';
-import CustomDropdown from './ui/CustomDropdown/index.jsx';
-import CustomNavLink from './ui/CustomNavLink.jsx';
+import { logout } from '../features/auth';
+import CustomDropdown from './ui/CustomDropdown/index';
+import CustomNavLink from './ui/CustomNavLink';
 
-const Navbar = () => {
+function Navbar() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Navbar = () => {
       dispatch(logout());
       navigate('/login');
     } catch (error) {
-      console.error('Logout failed', error);
+      // ignored
     }
   };
 
@@ -33,12 +33,12 @@ const Navbar = () => {
   const toggleProps = {
     className: '',
     id: 'user-dropdown',
-    icon: <i className="bi bi-person-circle fs-4"></i>
+    icon: <i className="bi bi-person-circle fs-4" />
   };
 
   return (
     <nav
-      className="header navbar navbar-expand-lg navbar-light bg-light
+      className="header navbar navbar-expand-sm navbar-light bg-light
         shadow-sm"
     >
       <div className="container-fluid">
@@ -54,7 +54,7 @@ const Navbar = () => {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon" />
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -80,6 +80,6 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
+}
 
 export default Navbar;

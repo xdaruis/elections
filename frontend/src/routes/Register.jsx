@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
-import CustomCard from '../components/CustomCard.js';
-import CustomInput from '../components/CustomInput.js';
+import CustomCard from '../components/CustomCard';
+import CustomInput from '../components/CustomInput';
+import InfoText from '../components/ui/InfoText';
 
-const Register = () => {
+function Register() {
+  const [error, setError] = useState('');
   const [userData, setUserData] = useState({});
   const [confirmPassword, setConfirmPassword] = useState({});
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -15,12 +17,12 @@ const Register = () => {
   const submitForm = (e) => {
     e.preventDefault();
     if (isAuthenticated) {
-      alert('Already logged in');
+      setError('Already logged in');
       return;
     }
 
     if (confirmPassword.password !== userData.password) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
 
@@ -31,19 +33,19 @@ const Register = () => {
         }
       })
       .then((response) => {
-        const data = response.data;
+        const { data } = response;
         if (data.email) {
           navigate('/login');
-          alert('Success');
         } else {
-          alert('Failed');
+          setError('Failed');
         }
       })
-      .catch((error) => alert(error));
+      .catch((err) => setError(err));
   };
 
   return (
     <CustomCard>
+      <InfoText message={error} type={error} />
       <form onSubmit={submitForm}>
         <div className="mb-md-4 mt-md-3 pb-5">
           <h2 className="fw-bold mb-5 text-uppercase">Register</h2>
@@ -73,6 +75,6 @@ const Register = () => {
       </div>
     </CustomCard>
   );
-};
+}
 
 export default Register;

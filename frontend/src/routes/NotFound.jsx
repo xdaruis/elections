@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const NotFound = () => {
+function NotFound() {
   return (
     <div className="d-flex flex-column justify-content-center mt-5">
       <div className="text-center">
@@ -13,6 +13,6 @@ const NotFound = () => {
       </div>
     </div>
   );
-};
+}
 
 export default NotFound;

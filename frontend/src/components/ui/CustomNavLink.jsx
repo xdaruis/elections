@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 function CustomNavLink({ label, linkTo }) {
   return (
     <NavLink
-      className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
+      className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
       to={linkTo}
     >
       {label}

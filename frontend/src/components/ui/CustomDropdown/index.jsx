@@ -7,6 +7,7 @@ function CustomDropdown({ mainItems, additionalItems = [], toggleProps }) {
   return (
     <div className="dropdown">
       <button
+        type="button"
         className={`btn btn-link dropdown-toggle bg-transparent
           border-0 p-0 ${toggleProps.className}`}
         id={toggleProps.id || 'user-dropdown'}
@@ -19,8 +20,8 @@ function CustomDropdown({ mainItems, additionalItems = [], toggleProps }) {
         className="dropdown-menu dropdown-menu-end"
         aria-labelledby={toggleProps.id || 'user-dropdown'}
       >
-        {mainItems.map((item, index) => (
-          <li key={index}>
+        {mainItems.map((item) => (
+          <li key={item.id}>
             <Link
               className="dropdown-item"
               to={item.path}
@@ -33,10 +34,14 @@ function CustomDropdown({ mainItems, additionalItems = [], toggleProps }) {
         <li>
           <hr className="dropdown-divider" />
         </li>
-        {additionalItems.map((item, index) => (
-          <li key={index}>
+        {additionalItems.map((item) => (
+          <li key={item.id}>
             {item.isButton ? (
-              <button className="dropdown-item" onClick={item.onClick}>
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={item.onClick}
+              >
                 {item.label}
               </button>
             ) : (

@@ -1,22 +1,22 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-import Footer from '../Footer.js';
-import Navbar from '../Navbar.js';
+import Footer from '../Footer';
+import Navbar from '../Navbar';
 import './styles.css';
 
-const Layout = () => {
+function Layout() {
   return (
     <div className="holy-grail-flexbox">
       <Navbar />
       <main className="main-content">
         <Outlet />
       </main>
-      <section className="left-sidebar"></section>
-      <aside className="right-sidebar"></aside>
+      <section className="left-sidebar" />
+      <aside className="right-sidebar" />
       <Footer />
     </div>
   );
-};
+}
 
 export default Layout;

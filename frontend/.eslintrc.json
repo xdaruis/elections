@@ -16,7 +16,10 @@
     "plugin:import/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:jsx-a11y/recommended",
+    "airbnb",
+    "prettier"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
