@@ -2,9 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 
-import { logout } from '../features/auth';
-import CustomDropdown from './ui/CustomDropdown/index';
-import CustomNavLink from './ui/CustomNavLink';
+import { logout } from '../../features/auth';
+import CustomDropdown from '../ui/CustomDropdown';
+import CustomNavLink from '../ui/CustomNavLink';
 
 function Navbar() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);

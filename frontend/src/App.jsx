@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import Layout from './components/Layout/index';
-import Loader from './components/Loader';
+import Layout from './components/layouts/Layout';
+import Loader from './components/ui/Loader';
 import { login, logout } from './features/auth';
-import Home from './routes/Home';
-import Login from './routes/Login';
-import NotFound from './routes/NotFound';
-import Register from './routes/Register';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import Register from './pages/Register';
 import setAuthToken from './utils/setAuthToken';
 
 if (localStorage.token) {

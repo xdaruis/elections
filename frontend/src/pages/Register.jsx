@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
-import CustomCard from '../components/CustomCard';
-import CustomInput from '../components/CustomInput';
+import CustomCard from '../components/ui/CustomCard';
+import CustomInput from '../components/ui/CustomInput';
 import InfoText from '../components/ui/InfoText';
 
 function Register() {
