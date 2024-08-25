@@ -12,8 +12,6 @@ function Layout() {
       <main className="main-content">
         <Outlet />
       </main>
-      <section className="left-sidebar" />
-      <aside className="right-sidebar" />
       <Footer />
     </div>
   );
