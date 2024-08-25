@@ -66,7 +66,7 @@ function Login() {
   };
 
   return (
-    <CustomCard>
+    <CustomCard width={5}>
       <form onSubmit={submitForm}>
         <div className="mb-md-2 mt-md-3 pb-5">
           <h2 className="fw-bold mb-5 text-uppercase">Sign in</h2>
@@ -87,14 +87,19 @@ function Login() {
               required
             />
           </div>
-          <button className="btn btn-outline-primary btn-lg px-5" type="submit">
-            Login
-          </button>
-          <p className="small mt-3 pb-lg-2">
-            <a className="text-50" href="#!">
-              Forgot password?
-            </a>
-          </p>
+          <div className="d-flex flex-column align-items-center">
+            <button
+              className="btn btn-outline-primary btn-lg px-5"
+              type="submit"
+            >
+              Login
+            </button>
+            <p className="small mt-3 pb-lg-2">
+              <a className="text-50" href="#!">
+                Forgot password?
+              </a>
+            </p>
+          </div>
         </div>
       </form>
       <div>
