@@ -7,6 +7,7 @@ import CustomCard from '../../components/ui/CustomCard';
 import CustomForm from '../../components/ui/CustomForm';
 import CustomInput from '../../components/ui/CustomInput';
 import InfoText from '../../components/ui/InfoText';
+import getError from '../../utils/getError';
 
 function Register() {
   const [error, setError] = useState('');
@@ -41,12 +42,7 @@ function Register() {
         navigate('/login');
       }
     } catch (err) {
-      const message = err.response?.data;
-      setError(
-        message.error ||
-          message[Object.keys(message)[0]] ||
-          'An unexpected error occured'
-      );
+      setError(getError(err));
     } finally {
       setIsSubmitting(false);
     }

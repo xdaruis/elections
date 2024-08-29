@@ -10,6 +10,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
+import Profile from './pages/user/Profile';
+import IsLoggedIn from './routes/IsLoggedIn';
 import setAuthToken from './utils/setAuthToken';
 
 if (localStorage.token) {
@@ -33,6 +35,16 @@ const router = createBrowserRouter([
       {
         path: '/register',
         element: <Register />
+      },
+      {
+        path: '/user',
+        element: <IsLoggedIn />,
+        children: [
+          {
+            path: '/user/profile',
+            element: <Profile />
+          }
+        ]
       }
     ]
   },
@@ -51,11 +63,9 @@ function App() {
       if (localStorage.token) {
         try {
           const { data } = await axios.get('/api/user/profile/');
-          if (data.username) {
-            login({ token: localStorage.token, username: data.username });
-          } else {
-            dispatch(logout());
-          }
+          dispatch(
+            login({ token: localStorage.token, username: data.username })
+          );
         } catch (err) {
           dispatch(logout());
         }

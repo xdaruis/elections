@@ -9,11 +9,14 @@ function CustomCard({ children, width = 4, title }) {
         <div className={columnClass}>
           <div className="card shadow">
             {title && (
-              <div className="card-header bg-primary text-white">
+              <div className="card-header text-dark">
                 <h2 className="card-title text-center mb-0">{title}</h2>
               </div>
             )}
-            <div className="card-body d-flex flex-column align-items-center">
+            <div
+              className="card-body d-flex flex-column
+                align-items-center pb-4"
+            >
               {children}
             </div>
           </div>

@@ -6,13 +6,13 @@ function CustomInput({
   type,
   required = false,
   id,
-  className = ''
+  className = '',
+  value = false
 }) {
   const handleChange = (e) => {
-    const { value } = e.target;
     setData((prevData) => ({
       ...prevData,
-      [id]: value
+      [id]: e.target.value
     }));
   };
 
@@ -25,6 +25,7 @@ function CustomInput({
         className="form-control"
         onChange={handleChange}
         required={required || undefined}
+        value={value || undefined}
       />
     </div>
   );

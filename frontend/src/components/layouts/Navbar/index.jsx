@@ -22,7 +22,7 @@ function Navbar() {
   };
 
   const mainItems = [
-    { label: 'Profile', path: '/profile' },
+    { label: 'Profile', path: '/user/profile' },
     { label: 'TBA', path: '/' }
   ];
 

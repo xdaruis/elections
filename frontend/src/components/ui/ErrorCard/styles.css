@@ -1,0 +1,16 @@
+.error-card {
+  border-left: 5px solid #dc3545;
+  background-color: #f8d7da;
+  border-radius: 0.25rem;
+}
+.error-icon {
+  font-size: 1.5rem;
+  color: #dc3545;
+}
+.error-title {
+  color: #721c24;
+  font-weight: bold;
+}
+.error-message {
+  color: #721c24;
+}
