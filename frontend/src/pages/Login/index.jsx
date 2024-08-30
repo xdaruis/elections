@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { login } from '../../features/auth';
+import getError from '../../utils/getError';
+
 import CustomCard from '../../components/ui/CustomCard';
 import CustomForm from '../../components/ui/CustomForm';
 import CustomInput from '../../components/ui/CustomInput';
-import { login } from '../../features/auth';
-import getError from '../../utils/getError';
 
 function Login() {
   const [error, setError] = useState('');

@@ -3,21 +3,17 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import { login, logout } from './features/auth';
+import IsLoggedIn from './routes/IsLoggedIn';
+import setAuthToken from './utils/setAuthToken';
+
 import Layout from './components/layouts/Layout';
 import Loader from './components/ui/Loader';
-import { login, logout } from './features/auth';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Profile from './pages/user/Profile';
-import IsLoggedIn from './routes/IsLoggedIn';
-import setAuthToken from './utils/setAuthToken';
-
-if (localStorage.token) {
-  setAuthToken(localStorage.token);
-}
-axios.defaults.withCredentials = true;
 
 const router = createBrowserRouter([
   {
@@ -41,7 +37,7 @@ const router = createBrowserRouter([
         element: <IsLoggedIn />,
         children: [
           {
-            path: '/user/profile',
+            path: 'profile',
             element: <Profile />
           }
         ]
@@ -59,8 +55,10 @@ function App() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    axios.defaults.withCredentials = true;
     const setUserSession = async () => {
       if (localStorage.token) {
+        setAuthToken(localStorage.token);
         try {
           const { data } = await axios.get('/api/user/profile/');
           dispatch(

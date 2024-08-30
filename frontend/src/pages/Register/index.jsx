@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
+import getError from '../../utils/getError';
+
 import CustomCard from '../../components/ui/CustomCard';
 import CustomForm from '../../components/ui/CustomForm';
 import CustomInput from '../../components/ui/CustomInput';
 import InfoText from '../../components/ui/InfoText';
-import getError from '../../utils/getError';
 
 function Register() {
   const [error, setError] = useState('');

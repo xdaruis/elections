@@ -12,8 +12,9 @@
   "endOfLine": "auto",
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
-    "^Components/(.*)$",
-    "^Utils/(.*)$",
+    "^.*(utils|features|routes)/(.*)$",
+    "^.*(components|pages)/(.*)$",
+    "^\\.{1,2}/",
     "^[./]"
   ],
   "importOrderSeparation": true,

@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
+import getError from '../../../utils/getError';
+
 import CustomCard from '../../../components/ui/CustomCard';
 import CustomInput from '../../../components/ui/CustomInput';
 import ErrorCard from '../../../components/ui/ErrorCard';
 import InfoText from '../../../components/ui/InfoText';
 import Loader from '../../../components/ui/Loader';
-import getError from '../../../utils/getError';
 
 function Profile() {
   const [formData, setFormData] = useState({});
@@ -38,7 +39,7 @@ function Profile() {
 
   const handleSave = async () => {
     try {
-      await axios.put('/api/user/profile/', changes);
+      await axios.patch('/api/user/profile/', changes);
       setFormData(changes);
     } catch (err) {
       setError(getError(err));
